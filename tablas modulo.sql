@@ -1,0 +1,31 @@
+CREATE TABLE CAT_ETIQUETAS(
+id_CAT_ETIQUETA int not null primary key auto_increment,
+nombre_cli varchar(40) not null,
+nmarca varchar(40) not null,
+etiq_camp varchar(50) not null,
+tipo varchar(30)not null,
+padre int not null,
+hijo int not null,
+identificador int not null,
+status int(1) not null);
+
+CREATE TABLE ETIQUETAS(
+id_etiqueta int not null primary key auto_increment,
+id_ficha int not null,
+id_CAT_ETIQUETA int not null,
+campo1 varchar(50),
+campo2 varchar(50),
+campo3 varchar(50),
+campo4 varchar(50),
+campo5 varchar(50),
+campo6 varchar(50),
+campo7 varchar(50),
+campo8 varchar(50),
+campo9 varchar(50),
+campo10 varchar(50),
+campo11 varchar(50),
+campo12 varchar(50),
+campo13 varchar(50),
+campo14 varchar(50),
+campo15 varchar(50),
+status int not null);
