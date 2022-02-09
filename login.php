@@ -1,4 +1,4 @@
-<div class="container" style="height: auto%"><br>
+<div class="container" style="height: auto;"><br>
     <div class="row justify-content-center">
         <div class="col-md-8"><div align="center"><img src="dist/img/Logo.png" class="img-fluid"/></div><br>
             <div class="card">

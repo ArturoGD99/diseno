@@ -35,6 +35,7 @@
     <!--Sweetalert-->
    <!--<link rel="stylesheet" href="dist/css/sweetalert.min.css">-->
     <link rel="stylesheet" href="dist/css/sweetalert.css">
+    
   <style>
       input{text-transform: uppercase;}
       textarea{text-transform: uppercase;}
@@ -105,7 +106,7 @@
                 <a href="#" id="consultas" class="nav-link" onclick="activar_opcion('consultas'); Submenu('sub_ficha'); Ajax_Dinamico('consultas.php','centro','');"><i class="nav-icon fas fa-search"></i><p>Consultas<i class="right fas fa-angle-left"></i></p></a>
             </li>
             <li class="nav-item has-treeview">
-                <a href="#" id="etiquetas" class="nav-link" onclick="activar_opcion('etiquetas'); Submenu('sub_ficha'); Ajax_Dinamico('Habilitacion/index.php','centro','');"><i class="nav-icon fas fa-tag"></i><p>Habilitación <i class="right fas fa-angle-left"></i></p></a>
+                <a href="#" id="etiquetas" class="nav-link" onclick="activar_opcion('etiquetas'); Submenu('sub_ficha'); Ajax_Dinamico('Habilitacion/habilitacion.php','centro','');"><i class="nav-icon fas fa-tag"></i><p>Habilitación <i class="right fas fa-angle-left"></i></p></a>
             </li>
            </ul>
       </nav>

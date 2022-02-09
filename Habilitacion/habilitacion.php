@@ -1,18 +1,16 @@
 <?php
-include_once("../adodb/adodb.inc.php");
-    include_once("../adodb/adodb-errorhandler.inc.php");
-    include_once("../conn.php");
+/*include_once("../adodb/adodb.inc.php");
+    include_once("../adodb/adodb-errorhandler.inc.php");*/
+    //include_once("../conn.php");
     include_once('../registro.php');
-    include "includes/header.php";
     $query = new Registro();
+    include "includes/header.php";
+    
     $ruta="../log";
     $campos="FF.ORDEN,FF.MODELO,FF.PEDIDO,FC.CLIENTE,FP.PRENDA,FM.MARCA";
     $tablas="FFICHA FF,FCAT_CLIENTE FC,FCAT_PRENDA FP, FCAT_MARCA FM";
     $criterios="FF.ID_CLIENTE= FC.ID_CLIENTE AND FF.ID_PRENDA=  FP.ID_PRENDA  AND FC.ID_CLIENTE= FM.ID_CLIENTE AND FC.ID_CLIENTE= FF.ID_CLIENTE AND FF.ID_MARCA=   FM.ID_MARCA";
     $rs=$query->Consultar($campos,$tablas,$criterios,"");
-
-    
-    
 ?>
 <!-- Bootstrap Color Picker -->
 <link rel="stylesheet" href="plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css">
@@ -60,7 +58,7 @@ include_once("../adodb/adodb.inc.php");
                                             <select id="cmbcliente" class="custom-select" name="ncmbcliente" onchange="Buscar_Marcas();" tabindex="1"><!--onchange="Mostrar(this.value)"-->
                                             <option value="0">Seleccione el cliente</option>
                                                 <?php
-                                                    $rs=$query->Consultar('CLIENTE','FCAT_CLIENTE',"","CLIENTE");
+                                                    $rs=$query->Consultar('*','FCAT_CLIENTE',"","CLIENTE");
                                                     while(!$rs->EOF){
                                                         echo "<option value='".$rs->fields['ID_CLIENTE']."'>".$rs->fields['CLIENTE']."</option>";
                                                         $rs->MoveNext();
@@ -75,35 +73,19 @@ include_once("../adodb/adodb.inc.php");
                                             <div id="dv_marca"><select class="custom-select" id="cmbmarca" name="ncmbmarca" tabindex="2">
                                                 <optgroup>
                                                     <option value="0">Seleccione la marca</option>
-                                                    <?php
-                                                    /*$criterios1="FF.ID_CLIENTE= FC.ID_CLIENTE AND FF.ID_PRENDA=FP.ID_PRENDA AND FC.ID_CLIENTE= FM.ID_CLIENTE AND FC.ID_CLIENTE= FF.ID_CLIENTE AND FF.ID_MARCA=FM.ID_MARCA AND FC.CLIENTE='WALMART' GROUP BY FM.MARCA";
-                                                    $rs=$query->Consultar("FM.MARCA",$tablas,$criterios1,"ORDEN");
-                                                    while(!$rs->EOF){
-                                                        echo "<option value='".$rs->fields['ID_MARCA']."'>".$rs->fields['MARCA']."</option>";
-                                                        $rs->MoveNext();
-                                                    }*/
-                                                    ?>
                                                 </optgroup>
                                             </select></div>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            
                                             <label>Tipo</label>
-                                            <select class="custom-select" id="cmbetiqueta" name="ncmbmarca" tabindex="9">
-                                                <optgroup>
-                                                    <?php
-                                                    $rs=$query->Consultar("id_cat_etiqueta,etiq_nom","cat_etiquetas","PADRE=1","");
-                                                    while(!$rs->EOF){
-                                                        echo "<option value='".$rs->fields['id_cat_etiqueta']."'>".$rs->fields['etiq_nom']."</option>";
-                                                        $rs->MoveNext();
-                                                    }
-                                                    ?>
-                                                </optgroup>
-                                                
-                                            </select>
-                                            
+                                                <div id="dv_etiquetas"><select class="custom-select" id="cmbetiqueta" name="ncmbetiqueta" tabindex="3">
+                                                    <optgroup>
+                                                    </optgroup>
+                                                    
+                                                </select>
+                                                </div>
                                         </div>
                                         
                                     </div>
@@ -117,13 +99,14 @@ include_once("../adodb/adodb.inc.php");
                                             </span>
                                         </div>
                                     </div>
-
-                                    <div id="campos"class="container">
-                                        
-                                    </div>
+                                    
                                     
                                 
-                            </div>   
+                            </div> 
+                            
+                                    <!--<div id="dv_campos" class="container"></div> -->
+                                    <input id="tcontador" type="text"> 
+                            <div class="row" id="dv_campos"></div>
                             <!--<div class="row">
                                 <div class="col-md-5"></div>
                                 <div class="col-md-1">
@@ -302,7 +285,6 @@ include_once("../adodb/adodb.inc.php");
 
     function Buscar_Marcas() {
         var param ='cte='+$('#cmbcliente').val()+'&tp=marca';
-        alert(param);
 
         $.ajax({
             url: 'habilitacion/consultas.php',
@@ -310,8 +292,39 @@ include_once("../adodb/adodb.inc.php");
             type: 'POST',
             data:param,
             success: function(data){
-                alert(data);
-                //$('#dv_marca').html(data);
+                $('#dv_marca').html(data);
+            },
+            error: function (request, status, error) {alert(request.responseText);}
+        });
+    }
+
+    function Buscar_Etiquetas() {
+        var param ='cte='+$('#cmbcliente').val()+'&marca='+$('#cmbmarca').val()+'&tp=etiq';
+        //alert(param);
+        $.ajax({
+            url: 'habilitacion/consultas.php',
+            cache:false,
+            type: 'POST',
+            data:param,
+            success: function(data){
+                $('#dv_etiquetas').html(data);
+            },
+            error: function (request, status, error) {alert(request.responseText);}
+        });
+    }
+
+    function Buscar_Campos() {
+        var param ='id_etiq='+$('#cmbetiqueta').val()+'&tp=campos';
+        
+        $.ajax({
+            url: 'habilitacion/consultas.php',
+            cache:false,
+            type: 'POST',
+            data:param,
+            success: function(data){
+                var ft = data.split('|');
+                $('#tcontador').val(ft[1]);
+                $('#dv_campos').html(ft[0]);
             },
             error: function (request, status, error) {alert(request.responseText);}
         });
