@@ -18,3 +18,9 @@ body {
     margin: 0 auto;
     padding: 1rem 0 3 rem 0;
 }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-column-gap: 20rem;
+    grid-row-gap: 10rem;
+    }
