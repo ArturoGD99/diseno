@@ -51,7 +51,7 @@
                     <div class="tab-pane fade show active" id="Etiquetas" style="position: relative; border: solid 0px purple;">
                         <br><br>
                         <form id="fmodelo">
-                            <div class="row">
+                            <div class="row container">
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label>Cliente</label>
@@ -99,6 +99,12 @@
                                             </div>
                                     </div>
                                     
+                                </div>
+                                <div class="container">
+                                    <div id="excelFiles" class="mb-3">
+                                    <input class="form-control" type="file" id="infile" onchange="Subir_Archivo();">
+                                    <div id="result"></div>
+                                    </div>
                                 </div>
                                 <!--<div class="col-md-2">
                                     <label >Agregar</label>
@@ -160,36 +166,13 @@
                                                             </thead>
                                                             <tbody>
                                                             <?php
-                                                                if(isset($_POST['ORDEN'])){
-                                                                    $orden=$_POST['ORDEN'];
-                                                                $criterios="FF.ID_CLIENTE= FC.ID_CLIENTE AND FF.ID_PRENDA=FP.ID_PRENDA AND FF.ORDEN=${'ORDEN'} AND FC.ID_CLIENTE=FM.ID_CLIENTE AND FC.ID_CLIENTE= FF.ID_CLIENTE AND FF.ID_MARCA=FM.ID_MARCA LIMIT 20";
-                                                                $rs=$query->Consultar($campos,$tablas,$criterios,""); 
-                                                                while( !$rs->EOF ): 
-                                                            ?>
-                                                            <tr>
-                                                                <td><?php echo $rs->fields['ORDEN'] ?></td>
-                                                                <td><?php echo $rs->fields['MODELO'];?></td>
-                                                                <td><?php echo $rs->fields['PEDIDO'];?> </td>
-                                                                <td><?php echo $rs->fields['CLIENTE']; ?></td>
-                                                                <td>
-                                                                    <form method="POST">
-                                                                    <input type="hidden" name="id_eliminar" value="<?php  ?>">
-                                                                    <!--<input type="submit" href="/admin/propiedades/borrar.php" class="boton boton-rojo" value="Generar">-->
-                                                                    </form>
-                                                                    <a href="Habilitacion/modelos/wallmart.php?id=<?php echo $rs->fields['ORDEN'];  ?>" class="btn btn-primary">Generar Base</a>
-                                                                    <a href="/admin/propiedades/actualizar.php?id=<?php  ?>" class="btn btn-secondary">Generar PDF</a>
-                                                                </td>
-                                                            </tr>
-                                                            <?php $rs->MoveNext();
-                                                                endwhile; 
-                                                            }else{
                                                                 $criterios="FF.ID_CLIENTE= FC.ID_CLIENTE AND FF.ID_PRENDA=FP.ID_PRENDA AND FC.ID_CLIENTE=FM.ID_CLIENTE AND FC.ID_CLIENTE= FF.ID_CLIENTE AND FF.ID_MARCA=FM.ID_MARCA LIMIT 20";
                                                                 $rs=$query->Consultar($campos,$tablas,$criterios,""); 
                                                                 while( !$rs->EOF ):      
                                                             ?>
                                                             <tr>
-                                                                <td><?php echo $rs->fields['ORDEN'] ?></td>
-                                                                <td><?php echo $rs->fields['MODELO'];?></td>
+                                                                <td ><?php echo $rs->fields['ORDEN'] ?></td>
+                                                                <td ><?php echo $rs->fields['MODELO'];?></td>
                                                                 <td><?php echo $rs->fields['PEDIDO'];?> </td>
                                                                 <td><?php echo $rs->fields['CLIENTE']; ?></td>
                                                                 <td>
@@ -197,13 +180,13 @@
                                                                     <input type="hidden" name="id_eliminar" value="<?php  ?>">
                                                                     <!--<input type="submit" href="/admin/propiedades/borrar.php" class="boton boton-rojo" value="Generar">-->
                                                                     </form>
-                                                                    <a href="Habilitacion/modelos/wallmart.php?id=<?php echo $rs->fields['ORDEN'];  ?>" class="btn btn-primary">Generar Base</a>
+                                                                    <a href="habilitacion/modelos/generar.php?id=<?php echo $rs->fields['ORDEN'] ?>" id="GenerarBase" class="btn btn-primary" class="btn btn-primary">Generar Base</a>
                                                                     <a href="/admin/propiedades/actualizar.php?id=<?php  ?>" class="btn btn-secondary">Generar PDF</a>
                                                                 </td>
                                                             </tr>
                                                             <?php $rs->MoveNext();
                                                                 endwhile; 
-                                                            }
+                                                            
                                                             ?>
                                                             </tbody>
                                                         </table>
@@ -274,7 +257,6 @@
     }
     function Buscar_Orden(){
         var param='cte='+$('#cmbcliente').val()+'&marca='+$('#cmbmarca').val()+'&tp=orden';
-        alert(param);
         $.ajax({
             url: 'habilitacion/consultas.php',
             cache:false,
@@ -288,7 +270,6 @@
     }
     function Buscar_Etiquetas() {
         var param ='cte='+$('#cmbcliente').val()+'&marca='+$('#cmbmarca').val()+'&tp=etiq';
-        //alert(param);
         $.ajax({
             url: 'habilitacion/consultas.php',
             cache:false,
@@ -301,8 +282,8 @@
         });
     }
     function Buscar_Campos() {
-        var param ='id_etiq='+$('#cmbetiqueta').val()+'&tp=campos';
-        alert(param)
+        var param ='id_etiq='+$('#cmbetiqueta').val()+'&orden='+$('#cmborden').val()+'&tp=campos';
+        alert(param);
         $.ajax({
             url: 'habilitacion/consultas.php',
             cache:false,
@@ -319,6 +300,44 @@
     }
     function Agregar_Campos(){
         var param='cont='+$('#tcontador').val()+'&tp=addCampos';
+        $.ajax({
+            url:'habilitacion/consultas.php',
+            cache:false,
+            type:'POST',
+            data:param,
+            success:function(data){
+                var ft = data.split('|');
+                $('#tcontador').val(ft[1]);
+                var element=document.createElement("DIV");
+                $(element).html(ft[0]);
+            },
+            error: function (request, status, error) {alert(request.responseText);}
+        });
+    }
+    function Subir_Archivo(){
+        var archivo=$('#infile')[0].files[0];//se recibe los valores de la global $_files por parte del archivo
+        var arr=archivo.name;//se obtiene el nombre del archivo
+
+        var datos=new FormData();
+        datos.append('fichero',archivo);
+        datos.append('nombre',arr);
+        alert(datos+'&tp=upload');
+        $.ajax({
+            url:'habilitacion/consultas.php',
+            cache:false,
+            type:'POST',
+            dataType:"html",
+            data:datos,
+            cache: false,
+            contentType: false,
+	        processData: false,
+            success:function(data){
+                alert(data);
+                $('#result').html(data);
+            }
+        })
+        /*
+        var param='file='+$('#infile').val()+'&tp=upload';
         alert(param);
         $.ajax({
             url:'habilitacion/consultas.php',
@@ -327,10 +346,19 @@
             data:param,
             success:function(data){
                 alert(data);
-                var ft = data.split('|');
-                $('#tcontador').val(ft[1]);
-                var element=document.createElement("DIV");
-                $(element).html(ft[0]);
+                $('#result').html(data);
+            }
+        })*/
+    }
+    function GenerarBase(){
+        var param= 'idord='+$('#tdorden').val();
+        $.ajax({
+            url: 'habilitacion/generar.php',
+            cache:false,
+            type: 'POST',
+            data:param,
+            success: function(data){
+                alert("Archivo generado correctamente");
             },
             error: function (request, status, error) {alert(request.responseText);}
         });

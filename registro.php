@@ -649,6 +649,21 @@ class Registro
 			}else
 				return 0;
 	}
+    public function Insertar_Chequera($xlsx){
+        $campos="";
+        $query = new Sentencias();
+        $db=$query->Iniciar_Transaccion($query);
+$campos.="'ID_CHEQUERA', 'ID_CLIENTE', 'ID_MARCA', 'MODELO', 'MODELO_CTE', 'CATEGORIA', 'FORMATO', 'DEPTO', 'CAT', 'ABASTO', 'NOMBRE_ABASTO', ";
+$campos.="'ETIQUETADO', 'BLOCK', 'TIPO_MARCA', 'MARCA', 'PROVEEDOR', 'RAZON', 'CODIGO', 'PEDIDO', 'DESC1', 'DESC2', 'COLOR', 'TALLA', 'CANTIDAD',";
+$campos.=" 'FCH_ENTREGA', 'STATUS_COMPRA', 'TIPO_TIENDA', 'PROGRAMA', 'COSTO', 'PV', 'STATUS'";
+
+        $sql="INSERT INTO fchequera(${campos})VALUES(${xlsx})";
+        $rs=$db->Execute($sql);
+        if($query->Finalizar_Transaccion($db)){
+            return 1;
+        }else
+            return 0;
+    }
 	private function InjectSQL_registro($valor, $tipo){
 		if($tipo==0){
 			$palabras = array('"',"EXEC","LIKE","\x00","\n","\r","\’","\x1a","“","‘","#",
