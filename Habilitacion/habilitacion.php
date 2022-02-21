@@ -157,6 +157,9 @@
                                                         <table class="ordenes table">
                                                             <thead>
                                                                 <tr>
+                                                                    <th>Marca</th>
+                                                                    <th>Cliente</th>
+                                                                    <th>Identificador</th>
                                                                     <th>Orden</th>
                                                                     <th>Modelo</th>
                                                                     <th>Pedido</th>
@@ -166,12 +169,18 @@
                                                             </thead>
                                                             <tbody>
                                                             <?php
-                                                                $criterios="FF.ID_CLIENTE= FC.ID_CLIENTE AND FF.ID_PRENDA=FP.ID_PRENDA AND FC.ID_CLIENTE=FM.ID_CLIENTE AND FC.ID_CLIENTE= FF.ID_CLIENTE AND FF.ID_MARCA=FM.ID_MARCA LIMIT 20";
-                                                                $rs=$query->Consultar($campos,$tablas,$criterios,""); 
+                                                                $tbl="FFICHA FF,FCAT_CLIENTE FC,FCAT_PRENDA FP, FCAT_MARCA FM, cat_etiquetas CE";
+                                                                $criterios="FF.ID_CLIENTE= FC.ID_CLIENTE AND FF.ID_PRENDA=FP.ID_PRENDA AND FC.ID_CLIENTE=FM.ID_CLIENTE AND ";
+                                                                $criterios.="FC.ID_CLIENTE= FF.ID_CLIENTE AND FF.ID_MARCA=FM.ID_MARCA AND CE.ID_CLIENTE=FF.ID_CLIENTE AND ";
+                                                                $criterios.=" CE.ID_MARCA=FF.ID_MARCA GROUP BY FF.ID_FICHA";
+                                                                $rs=$query->Consultar("*",$tbl,$criterios,""); 
                                                                 while( !$rs->EOF ):      
                                                             ?>
                                                             <tr>
-                                                                <td ><?php echo $rs->fields['ORDEN'] ?></td>
+                                                                <td><?php echo $rs->fields['ID_MARCA']?></td>
+                                                                <td><?php echo $rs->fields['ID_CLIENTE']; ?></td>
+                                                                <td><?php echo $rs->fields['IDENTIFICADOR']; ?></td>
+                                                                <td ><?php echo $rs->fields['ORDEN']; ?></td>
                                                                 <td ><?php echo $rs->fields['MODELO'];?></td>
                                                                 <td><?php echo $rs->fields['PEDIDO'];?> </td>
                                                                 <td><?php echo $rs->fields['CLIENTE']; ?></td>
@@ -180,7 +189,8 @@
                                                                     <input type="hidden" name="id_eliminar" value="<?php  ?>">
                                                                     <!--<input type="submit" href="/admin/propiedades/borrar.php" class="boton boton-rojo" value="Generar">-->
                                                                     </form>
-                                                                    <a href="habilitacion/modelos/generar.php?id=<?php echo $rs->fields['ORDEN'] ?>" id="GenerarBase" class="btn btn-primary" class="btn btn-primary">Generar Base</a>
+                                                                    <a href="habilitacion/modelos/generar.php?identificador=1&idmarca=<?php echo $rs->fields['ID_MARCA'];?>&idcte=<?php echo $rs->fields['ID_CLIENTE'];?>&orden=<?php echo $rs->fields['ORDEN'] ?>" id="GenerarBase" class="btn btn-primary" class="btn btn-primary">Generar Etiqueta</a>
+                                                                    <a href="habilitacion/modelos/generar.php?identificador=2&idmarca=<?php echo $rs->fields['ID_MARCA'];?>&idcte=<?php echo $rs->fields['ID_CLIENTE'];?>&orden=<?php echo $rs->fields['ORDEN'] ?>" id="GenerarBase" class="btn btn-primary" class="btn btn-primary">Generar Precio</a>
                                                                     <a href="/admin/propiedades/actualizar.php?id=<?php  ?>" class="btn btn-secondary">Generar PDF</a>
                                                                 </td>
                                                             </tr>
